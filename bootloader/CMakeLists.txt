@@ -2,11 +2,21 @@ add_executable(bootloader.elf
     ${PROJECT_SOURCE_DIR}/startup/bootloader_sttp.c
     ${PROJECT_SOURCE_DIR}/external/cmsis-device-l4/Source/Templates/system_stm32l4xx.c
     src/main.c
+    src/bootloader_validation.c
+    src/bootloader_jump.c
 )
 
-# or include specific directory target_include_directories
-target_link_libraries(bootloader.elf PRIVATE cmsis)
+# Include directories
+target_include_directories(bootloader.elf PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
 
+# CMSIS
+target_link_libraries(bootloader.elf PRIVATE 
+    cmsis
+)
+
+# Compiler options
 target_compile_options(bootloader.elf PRIVATE
     -mcpu=cortex-m4
     -mthumb
@@ -24,6 +34,7 @@ target_compile_options(bootloader.elf PRIVATE
     -g3
 )
 
+# Linker options
 target_link_options(bootloader.elf PRIVATE
     -mcpu=cortex-m4
     -mthumb
@@ -35,9 +46,13 @@ target_link_options(bootloader.elf PRIVATE
     -T${PROJECT_SOURCE_DIR}/linker/bootloader.ld
 )
 
+# Target properties
 set_target_properties(bootloader.elf PROPERTIES
     SUFFIX ""
 )
+
+
+# Firmware artifactt tools
 
 find_program(CMAKE_OBJCOPY
     NAMES arm-none-eabi-objcopy
@@ -49,6 +64,7 @@ find_program(CMAKE_SIZE
     REQUIRED
 )
 
+# Generate HEX, BIN, and display firmware size
 add_custom_command(TARGET bootloader.elf POST_BUILD
     COMMAND ${CMAKE_OBJCOPY}
         -O ihex

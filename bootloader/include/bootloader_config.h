@@ -2,6 +2,8 @@
 #define BOOTLOADER_CONFIG_H
 
 #include <stdint.h>
+#include "stm32l476xx.h"
+
 /*
 * STM32L476RG - Flash organization
 * Flash size: 1 MB
@@ -37,8 +39,9 @@
 */
 #define SRAM1_START_ADDRESS             0x20000000UL
 #define SRAM1_SIZE                      0x00018000UL
+#define SRAM1_END_ADDRESS               (SRAM1_START_ADDRESS + SRAM1_SIZE)
 #define SRAM2_START_ADDRESS             0x10000000UL
-#define SRAM2_SIZE                      0x00008000UL
+#define SRAM2_END_ADDRESS               (SRAM2_START_ADDRESS + SRAM2_SIZE)
 
 /* Firmware validation */
 #define APPLICATION_VECTOR_SIZE        8U
