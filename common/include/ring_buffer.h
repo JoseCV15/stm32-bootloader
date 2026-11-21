@@ -27,7 +27,7 @@ ring_buffer_status_t ring_buffer_get(ring_buffer_t *rb, uint8_t *dst);
 ring_buffer_status_t rb_write(ring_buffer_t *rb, const uint8_t *src, uint32_t length, uint32_t *written);
 ring_buffer_status_t rb_read(ring_buffer_t *rb, uint8_t *dst, uint32_t length, uint32_t *received);
 
-ring_buffer_status_t rb_clear(ring_buffer_t *rb);
+ring_buffer_status_t ring_buffer_clear(ring_buffer_t *rb);
 bool ring_buffer_is_empty(const ring_buffer_t *rb);
 bool ring_buffer_is_full(const ring_buffer_t *rb);
 uint32_t ring_buffer_free(const ring_buffer_t *rb);

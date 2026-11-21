@@ -2,7 +2,8 @@
 #include <stdbool.h>
 
 #include "stm32l476xx.h"
-#include "bootloader_config.h"
+
+#include "common/include/flash_config.h"
 #include "bootloader_validation.h"
 #include "bootloader_jump.h"
 

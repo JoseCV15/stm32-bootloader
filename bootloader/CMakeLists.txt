@@ -1,14 +1,20 @@
+
+set(COMMON_DIR ${PROJECT_SOURCE_DIR}/common)
+
 add_executable(bootloader.elf
     ${PROJECT_SOURCE_DIR}/startup/bootloader_sttp.c
     ${PROJECT_SOURCE_DIR}/external/cmsis-device-l4/Source/Templates/system_stm32l4xx.c
     src/main.c
     src/bootloader_validation.c
     src/bootloader_jump.c
+    ${COMMON_DIR}/src/crc.c
+    ${COMMON_DIR}/src/ring_buffer.c
 )
 
 # Include directories
 target_include_directories(bootloader.elf PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${COMMON_DIR}/include
 )
 
 # CMSIS

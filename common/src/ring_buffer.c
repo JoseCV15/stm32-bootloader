@@ -19,8 +19,8 @@ ring_buffer_status_t  ring_buffer_init(ring_buffer_t *rb, uint8_t *storage, uint
         return RINGBUFFER_ERR_INV_ARG;
     }
 
-    if (!ring_buffer_is_valid(size)) {
-        return RINGBUFFER_ERR_CAPACITY;
+    if (!ring_buffer_is_power_of_two(size)) {
+        return RINGBUFFER_ERR_INV_ARG;
     }
 
     rb->data = storage;
@@ -110,7 +110,7 @@ ring_buffer_status_t rb_read(ring_buffer_t *rb, uint8_t *dst, uint32_t length, u
     return RINGBUFFER_OK;
 }
 
-ring_buffer_status_t rb_clear(ring_buffer_t *rb)
+ring_buffer_status_t ring_buffer_clear(ring_buffer_t *rb)
 {
     if (!ring_buffer_is_valid(rb)) {
         return RINGBUFFER_ERR_INV_ARG;
