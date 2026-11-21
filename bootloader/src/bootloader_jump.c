@@ -35,7 +35,7 @@ bool bootloader_jump_to_application(void)
 
     SCB->ICSR = SCB_ICSR_PENDSTCLR_Msk | SCB_ICSR_PENDSVCLR_Msk;
 
-    SCB->VTOR = APPLICATION_START_ADDRESS;
+    SCB->VTOR = APPLICATION_VT_OFFSET;
 
     __DSB();
     __ISB();
