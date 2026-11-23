@@ -1,10 +1,39 @@
+# Project root directory
+get_filename_component(PROJECT_ROOT
+    "${CMAKE_CURRENT_SOURCE_DIR}/.."
+    ABSOLUTE
+)
+
+set(COMMON_DIR ${PROJECT_ROOT}/common)
+set(DRIVERS_DIR ${PROJECT_ROOT}/drivers)
+set(PLATFORM_DIR ${PROJECT_ROOT}/platform/stm32l476)
+set(EXTERNAL_DIR ${PROJECT_ROOT}/external)
+
+
+
 add_executable(application.elf
-    ${PROJECT_SOURCE_DIR}/startup/application_sttp.c
-    ${PROJECT_SOURCE_DIR}/external/cmsis-device-l4/Source/Templates/system_stm32l4xx.c
+    ${PLATFORM_DIR}/startup/application_sttp.c
+    #${EXTERNAL_DIR}/cmsis-device-l4/Source/Templates/system_stm32l4xx.c
+    ${DRIVERS_DIR}/src/gpio.c
+    ${DRIVERS_DIR}/src/rcc_clock.c
+    ${DRIVERS_DIR}/src/rcc.c
+    ${DRIVERS_DIR}/src/systick.c
+    ${DRIVERS_DIR}/src/led.c
+    ${DRIVERS_DIR}/src/button.c
+    ${DRIVERS_DIR}/src/uart.c
+    ${COMMON_DIR}/src/ring_buffer.c
     src/main.c
 )
 
-target_link_libraries(application.elf PRIVATE cmsis)
+# Include directories
+target_include_directories(application.elf PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${COMMON_DIR}/include
+    ${DRIVERS_DIR}/include
+)
+
+# CMSIS
+target_link_libraries(application.elf PRIVATE cmsis gcc)
 
 target_compile_options(application.elf PRIVATE
     -mcpu=cortex-m4
@@ -31,18 +60,13 @@ target_link_options(application.elf PRIVATE
     -nostdlib
     -Wl,--gc-sections
     -Wl,-Map=${CMAKE_CURRENT_BINARY_DIR}/application.map
-    -T${PROJECT_SOURCE_DIR}/linker/application.ld
+    -T${PLATFORM_DIR}/linker/application.ld
 )
 
 set_target_properties(application.elf PROPERTIES
     SUFFIX ""
 )
 
-
-find_program(CMAKE_SIZE
-    NAMES arm-none-eabi-size
-    REQUIRED
-)
 
 add_custom_command(TARGET application.elf POST_BUILD
     COMMAND ${CMAKE_OBJCOPY}

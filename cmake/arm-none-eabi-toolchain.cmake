@@ -7,4 +7,7 @@ set(CMAKE_CXX_COMPILER arm-none-eabi-g++)
 
 set(CMAKE_ASM_COMPILER arm-none-eabi-gcc)
 
+set(CMAKE_OBJCOPY arm-none-eabi-objcopy CACHE FILEPATH "ARM objcopy")
+set(CMAKE_SIZE arm-none-eabi-size CACHE FILEPATH "ARM size")
+
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)

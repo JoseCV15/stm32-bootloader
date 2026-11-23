@@ -1,9 +1,18 @@
 
-set(COMMON_DIR ${PROJECT_SOURCE_DIR}/common)
+# Project root directory
+get_filename_component(PROJECT_ROOT
+    "${CMAKE_CURRENT_SOURCE_DIR}/.."
+    ABSOLUTE
+)
+
+set(COMMON_DIR ${PROJECT_ROOT}/common)
+set(DRIVERS_DIR ${PROJECT_ROOT}/drivers)
+set(PLATFORM_DIR ${PROJECT_ROOT}/platform/stm32l476)
+set(EXTERNAL_DIR ${PROJECT_ROOT}/external)
 
 add_executable(bootloader.elf
-    ${PROJECT_SOURCE_DIR}/startup/bootloader_sttp.c
-    ${PROJECT_SOURCE_DIR}/external/cmsis-device-l4/Source/Templates/system_stm32l4xx.c
+    ${PLATFORM_DIR}/startup/bootloader_sttp.c
+    ${EXTERNAL_DIR}/cmsis-device-l4/Source/Templates/system_stm32l4xx.c
     src/main.c
     src/bootloader_validation.c
     src/bootloader_jump.c
@@ -15,11 +24,13 @@ add_executable(bootloader.elf
 target_include_directories(bootloader.elf PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${COMMON_DIR}/include
+    ${DRIVERS_DIR}/include
 )
 
 # CMSIS
 target_link_libraries(bootloader.elf PRIVATE 
     cmsis
+    gcc
 )
 
 # Compiler options
@@ -49,7 +60,7 @@ target_link_options(bootloader.elf PRIVATE
     -nostdlib
     -Wl,--gc-sections
     -Wl,-Map=${CMAKE_CURRENT_BINARY_DIR}/bootloader.map
-    -T${PROJECT_SOURCE_DIR}/linker/bootloader.ld
+    -T${PLATFORM_DIR}/linker/bootloader.ld
 )
 
 # Target properties

@@ -3,7 +3,7 @@
 
 #include "stm32l476xx.h"
 
-#include "common/include/flash_config.h"
+#include "flash_config.h"
 #include "bootloader_validation.h"
 #include "bootloader_jump.h"
 

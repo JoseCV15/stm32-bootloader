@@ -269,15 +269,14 @@ static void call_cpp_constructors(void)
  */
 void Reset_Handler(void)
 {
-    SCB->VTOR = 0x08008000U;
-    __asm volatile ("dsb");
-    __asm volatile ("isb");
+
 
     copy_data();
     zero_bss();
     call_cpp_constructors();
 
     SystemInit();
+    __enable_irq();
     main();
 
     while (1)

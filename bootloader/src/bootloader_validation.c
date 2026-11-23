@@ -1,5 +1,5 @@
 #include "bootloader_validation.h"
-#include "common/include/flash_config.h"
+#include "flash_config.h"
 
 
 static bool is_stack_pointer_valid(uint32_t stack_pointer)

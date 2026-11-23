@@ -24,8 +24,8 @@ typedef enum {
 ring_buffer_status_t ring_buffer_init(ring_buffer_t *rb, uint8_t *storage, uint32_t size);
 ring_buffer_status_t ring_buffer_put(ring_buffer_t *rb, uint8_t src);
 ring_buffer_status_t ring_buffer_get(ring_buffer_t *rb, uint8_t *dst);
-ring_buffer_status_t rb_write(ring_buffer_t *rb, const uint8_t *src, uint32_t length, uint32_t *written);
-ring_buffer_status_t rb_read(ring_buffer_t *rb, uint8_t *dst, uint32_t length, uint32_t *received);
+ring_buffer_status_t ring_buffer_write(ring_buffer_t *rb, const uint8_t *src, uint32_t length, uint32_t *written);
+ring_buffer_status_t ring_buffer_read(ring_buffer_t *rb, uint8_t *dst, uint32_t length, uint32_t *received);
 
 ring_buffer_status_t ring_buffer_clear(ring_buffer_t *rb);
 bool ring_buffer_is_empty(const ring_buffer_t *rb);
