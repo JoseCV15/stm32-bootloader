@@ -12,12 +12,21 @@ set(EXTERNAL_DIR ${PROJECT_ROOT}/external)
 
 add_executable(bootloader.elf
     ${PLATFORM_DIR}/startup/bootloader_sttp.c
-    ${EXTERNAL_DIR}/cmsis-device-l4/Source/Templates/system_stm32l4xx.c
+    #${EXTERNAL_DIR}/cmsis-device-l4/Source/Templates/system_stm32l4xx.c
     src/main.c
     src/bootloader_validation.c
     src/bootloader_jump.c
+    src/test_flash.c
     ${COMMON_DIR}/src/crc.c
     ${COMMON_DIR}/src/ring_buffer.c
+    ${DRIVERS_DIR}/src/gpio.c
+    ${DRIVERS_DIR}/src/rcc_clock.c
+    ${DRIVERS_DIR}/src/rcc.c
+    ${DRIVERS_DIR}/src/systick.c
+    ${DRIVERS_DIR}/src/led.c
+    ${DRIVERS_DIR}/src/button.c
+    ${DRIVERS_DIR}/src/uart.c
+    ${DRIVERS_DIR}/src/flash.c
 )
 
 # Include directories
@@ -57,7 +66,11 @@ target_link_options(bootloader.elf PRIVATE
     -mthumb
     -mfpu=fpv4-sp-d16
     -mfloat-abi=hard
-    -nostdlib
+    #-nostdlib
+    -nostartfiles
+    --specs=nano.specs
+    --specs=nosys.specs
+
     -Wl,--gc-sections
     -Wl,-Map=${CMAKE_CURRENT_BINARY_DIR}/bootloader.map
     -T${PLATFORM_DIR}/linker/bootloader.ld

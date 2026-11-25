@@ -1,43 +1,85 @@
+
 ENTRY(Reset_Handler)
+
+/* STM32L476RG
+ *
+ * Bootloader:
+ *   Flash: 32 KB
+ *   SRAM1: 96 KB
+ *
+ * Application starts at 0x08008000.
+ */
 
 MEMORY
 {
-    FLASH (rx) : ORIGIN = 0x08000000, LENGTH = 32K
+    FLASH (rx)  : ORIGIN = 0x08000000, LENGTH = 32K
     SRAM  (rwx) : ORIGIN = 0x20000000, LENGTH = 96K
 }
 
+/* Initial stack pointer: top of SRAM1 */
+_estack = ORIGIN(SRAM) + LENGTH(SRAM);
+
 SECTIONS
 {
+    /* Start Flash sections at the beginning of bootloader Flash */
     . = ORIGIN(FLASH);
 
-    .isr_vector ALIGN(4) :
+    /* ---------------------------------------------------------
+     * Interrupt vector table
+     * --------------------------------------------------------- */
+    .isr_vector :
     {
+        . = ALIGN(4);
+
         __isr_vector_start = .;
 
         KEEP(*(.isr_vector))
         KEEP(*(.isr_vector.*))
 
+        . = ALIGN(4);
+
         __isr_vector_end = .;
     } > FLASH
 
-    .text ALIGN(4) :
+    /* ---------------------------------------------------------
+     * Program code
+     * --------------------------------------------------------- */
+    .text :
     {
+        . = ALIGN(4);
+
         *(.text)
         *(.text.*)
 
+        *(.glue_7)
+        *(.glue_7t)
+
         . = ALIGN(4);
     } > FLASH
 
-    .rodata ALIGN(4) :
+    /* ---------------------------------------------------------
+     * Read-only data
+     * --------------------------------------------------------- */
+    .rodata :
     {
+        . = ALIGN(4);
+
         *(.rodata)
         *(.rodata.*)
 
+        *(.constdata)
+        *(.constdata.*)
+
         . = ALIGN(4);
     } > FLASH
 
-    .preinit_array ALIGN(4) :
+    /* ---------------------------------------------------------
+     * Pre-initialization array
+     * --------------------------------------------------------- */
+    .preinit_array :
     {
+        . = ALIGN(4);
+
         PROVIDE_HIDDEN(__preinit_array_start = .);
 
         KEEP(*(.preinit_array))
@@ -48,8 +90,13 @@ SECTIONS
         . = ALIGN(4);
     } > FLASH
 
-    .init_array ALIGN(4) :
+    /* ---------------------------------------------------------
+     * Initialization array
+     * --------------------------------------------------------- */
+    .init_array :
     {
+        . = ALIGN(4);
+
         PROVIDE_HIDDEN(__init_array_start = .);
 
         KEEP(*(.init_array))
@@ -60,8 +107,13 @@ SECTIONS
         . = ALIGN(4);
     } > FLASH
 
-    .fini_array ALIGN(4) :
+    /* ---------------------------------------------------------
+     * Finalization array
+     * --------------------------------------------------------- */
+    .fini_array :
     {
+        . = ALIGN(4);
+
         PROVIDE_HIDDEN(__fini_array_start = .);
 
         KEEP(*(.fini_array))
@@ -72,10 +124,17 @@ SECTIONS
         . = ALIGN(4);
     } > FLASH
 
-    _sidata = LOADADDR(.data);
+    /* ---------------------------------------------------------
+     * Initialized data
+     *
+     * VMA: SRAM (where variables execute)
+     * LMA: FLASH (where initial values are stored)
+     * --------------------------------------------------------- */
 
-    .data ALIGN(4) :
+    .data :
     {
+        . = ALIGN(4);
+
         _sdata = .;
 
         *(.data)
@@ -86,12 +145,21 @@ SECTIONS
         _edata = .;
     } > SRAM AT > FLASH
 
-    .bss ALIGN(4) :
+    /* Flash address containing the initial .data values */
+    _sidata = LOADADDR(.data);
+
+    /* ---------------------------------------------------------
+     * Zero-initialized data
+     * --------------------------------------------------------- */
+    .bss (NOLOAD) :
     {
+        . = ALIGN(4);
+
         _sbss = .;
 
         *(.bss)
         *(.bss.*)
+
         *(COMMON)
 
         . = ALIGN(4);
@@ -99,8 +167,15 @@ SECTIONS
         _ebss = .;
     } > SRAM
 
-    .noinit ALIGN(4) :
+    /* ---------------------------------------------------------
+     * No-init data
+     *
+     * This section is not cleared by startup code.
+     * --------------------------------------------------------- */
+    .noinit (NOLOAD) :
     {
+        . = ALIGN(4);
+
         _snoinit = .;
 
         *(.noinit)
@@ -111,11 +186,17 @@ SECTIONS
         _enoinit = .;
     } > SRAM
 
-    _estack = ORIGIN(SRAM) + LENGTH(SRAM);
-
+    /* ---------------------------------------------------------
+     * Heap / end of static SRAM allocation
+     * --------------------------------------------------------- */
     . = ALIGN(8);
+
     end = .;
     _end = .;
+
+    /* ---------------------------------------------------------
+     * Linker assertions
+     * --------------------------------------------------------- */
 
     ASSERT(
         _end <= ORIGIN(SRAM) + LENGTH(SRAM),
@@ -129,9 +210,23 @@ SECTIONS
 
     ASSERT(
         __isr_vector_end <= ORIGIN(FLASH) + LENGTH(FLASH),
-        "ERROR: Bootloader Flash overflow"
+        "ERROR: Vector table exceeds bootloader Flash"
     )
 
+    ASSERT(
+        LOADADDR(.data) + SIZEOF(.data) <=
+        ORIGIN(FLASH) + LENGTH(FLASH),
+        "ERROR: Bootloader Flash overflow (including .data)"
+    )
+
+    ASSERT(
+        SIZEOF(.text) + SIZEOF(.rodata) <= LENGTH(FLASH),
+        "ERROR: Bootloader code/data exceeds Flash"
+    )
+
+    /* ---------------------------------------------------------
+     * Discard unused metadata sections
+     * --------------------------------------------------------- */
     /DISCARD/ :
     {
         *(.ARM.exidx*)
