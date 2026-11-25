@@ -22,6 +22,7 @@ add_executable(application.elf
     ${DRIVERS_DIR}/src/button.c
     ${DRIVERS_DIR}/src/uart.c
     ${COMMON_DIR}/src/ring_buffer.c
+    ${COMMON_DIR}/src/timer.c
     src/main.c
 )
 

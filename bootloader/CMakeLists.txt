@@ -26,7 +26,6 @@ add_executable(bootloader.elf
     ${DRIVERS_DIR}/src/led.c
     ${DRIVERS_DIR}/src/button.c
     ${DRIVERS_DIR}/src/uart.c
-    ${DRIVERS_DIR}/src/flash.c
 )
 
 # Include directories
