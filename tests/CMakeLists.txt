@@ -1,7 +1,7 @@
 
 cmake_minimum_required(VERSION 3.20)
 
-project(ring_buffer_tests C)
+project(packet_tests C)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
@@ -12,20 +12,26 @@ get_filename_component(PROJECT_ROOT
     ABSOLUTE
 )
 
-add_executable(test_ring_buffer
-    test_ring_buffer.c
-    ${PROJECT_ROOT}/common/src/ring_buffer.c
+add_executable(test_packet
+    test_packet.c
+    ${PROJECT_ROOT}/common/src/packet.c
+    ${PROJECT_ROOT}/common/src/crc.c
+
 )
 
-target_include_directories(test_ring_buffer PRIVATE
+target_include_directories(test_packet PRIVATE
     ${PROJECT_ROOT}/common/include
 )
+if (CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
+    target_compile_options(test_packet PRIVATE
+        -Wall
+        -Wextra
+        -Wpedantic
+        -Wconversion
+        -Wshadow
+        -g
+    )
+endif()
 
-target_compile_options(test_ring_buffer PRIVATE
-    -Wall
-    -Wextra
-    -Wpedantic
-    -Wconversion
-    -Wshadow
-    -g
-)
+enable_testing()
+add_test(NAME packet_tests COMMAND test_packet)
