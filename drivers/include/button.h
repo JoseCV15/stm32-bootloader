@@ -6,6 +6,7 @@
 
 #include "gpio.h"
 #include "status.h"
+#include "timer.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -46,7 +47,7 @@ typedef struct {
     gpio_pupd_t pull;
     bool active_low;
     button_state_t state, previous_state;
-    uint32_t last_change_tick;
+    timer_t debounce_timer;
 } button_t;
 
 status_t button_init(button_type_t btn_type);

@@ -739,6 +739,25 @@ status_t uart_send_string(uart_id_t uart_id, const char *str)
     return STATUS_OK;
 }
 
+status_t uart_send_buffer(uart_id_t uart_id, const uint8_t *buffer, uint32_t buffer_size)
+{
+    status_t status = STATUS_OK;
+    if (!uart_is_valid(uart_id) || !buffer || (buffer_size == 0U)) {
+        return STATUS_INVALID_ARGUMENT;
+    }
+
+    for (uint32_t i = 0; i < buffer_size; i++)
+    {
+        status = uart_send_byte(uart_id, buffer[i]);
+        if (status != STATUS_OK) {
+            return status;
+        }
+    }
+
+    return STATUS_OK;
+
+}
+
 
 status_t uart_receive_byte(uart_id_t uart_id, uint8_t *byte)
 {

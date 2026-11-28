@@ -18,9 +18,9 @@ typedef enum {
 } timer_state_t;
 
 typedef struct {
-    uint64_t start_time;      // when the timer started
-    uint64_t timeout_ms;      // how long the timer should wait
-    uint64_t elapsed_ms;      // how much timer has passed since the start
+    uint32_t start_time;      // when the timer started
+    uint32_t timeout_ms;      // how long the timer should wait
+    uint32_t elapsed_ms;      // how much timer has passed since the start
     timer_mode_t mode;
     timer_state_t state;
 } timer_t;
@@ -31,11 +31,11 @@ typedef struct {
  * @param timeout_ms Timeout in milliseconds
  * @param mode Timer operating mode
 */
-status_t timer_init(timer_t *timer, uint64_t timeout_ms, timer_mode_t mode);
+status_t timer_init(timer_t *timer, uint32_t timeout_ms, timer_mode_t mode);
 status_t timer_start(timer_t *timer);
 void timer_stop(timer_t *timer);
 status_t timer_reset(timer_t *timer);
-status_t timer_set_timeout(timer_t *timer, uint64_t new_timeout);
+status_t timer_set_timeout(timer_t *timer, uint32_t new_timeout);
 
 /**
  * @brief Check if the timer has expired
@@ -44,7 +44,7 @@ status_t timer_set_timeout(timer_t *timer, uint64_t new_timeout);
  */
 bool timer_is_expired(timer_t *timer);
 bool timer_is_running(const timer_t *timer);
-uint64_t timer_get_elapsed(const timer_t *timer);
-uint64_t timer_get_remaining(const timer_t *timer);
+uint32_t timer_get_elapsed(const timer_t *timer);
+uint32_t timer_get_remaining(const timer_t *timer);
 
 #endif 

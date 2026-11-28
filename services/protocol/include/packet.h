@@ -2,7 +2,8 @@
 #define PACKET_H
 
 #include <stdint.h>
-#include <stdbool.h>
+//#include <stdbool.h>
+#include <stddef.h>
 
 /**
  * Packet Header
@@ -14,13 +15,13 @@
 
 #define PACKET_SOF1              0xAA
 #define PACKET_SOF2              0x55
-#define PACKET_SOF_SIZE          2
-#define PACKET_SEQUENCE_SIZE     1
-#define PACKET_COMMAND_SIZE      1
-#define PACKET_LENGTH_SIZE       2
+#define PACKET_SOF_SIZE          2U
+#define PACKET_SEQUENCE_SIZE     1U
+#define PACKET_COMMAND_SIZE      1U
+#define PACKET_LENGTH_SIZE       2U
 #define PACKET_HEADER_SIZE       (PACKET_SOF_SIZE + PACKET_SEQUENCE_SIZE + PACKET_COMMAND_SIZE + PACKET_LENGTH_SIZE)
-#define PACKET_CRC_SIZE          4
-#define PACKET_MAX_PAYLOAD       16
+#define PACKET_CRC_SIZE          4U
+#define PACKET_MAX_PAYLOAD       256U
 #define PACKET_MIN_SIZE          (PACKET_HEADER_SIZE + PACKET_CRC_SIZE)
 #define PACKET_MAX_SIZE          (PACKET_MAX_PAYLOAD + PACKET_HEADER_SIZE + PACKET_CRC_SIZE)
 #define PACKET_LENGTH_OFFSET     (PACKET_SOF_SIZE + PACKET_SEQUENCE_SIZE + PACKET_COMMAND_SIZE)

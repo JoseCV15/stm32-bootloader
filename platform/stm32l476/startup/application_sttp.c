@@ -269,8 +269,6 @@ static void call_cpp_constructors(void)
  */
 void Reset_Handler(void)
 {
-
-
     copy_data();
     zero_bss();
     call_cpp_constructors();

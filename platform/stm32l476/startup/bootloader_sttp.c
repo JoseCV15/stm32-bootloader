@@ -270,14 +270,16 @@ static void call_cpp_constructors(void)
 
 void Reset_Handler(void)
 {
-    SCB->VTOR = 0x08000000U;
+   // SCB->VTOR = 0x08000000U;
 
-    __DSB();
-    __ISB();
+   // __DSB();
+    //__ISB();
 
     copy_data();
     zero_bss();
     call_cpp_constructors();
+    SystemInit();
+    __enable_irq();
 
     main();
 

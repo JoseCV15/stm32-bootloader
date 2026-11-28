@@ -5,40 +5,28 @@ get_filename_component(PROJECT_ROOT
     ABSOLUTE
 )
 
-set(COMMON_DIR ${PROJECT_ROOT}/common)
-set(DRIVERS_DIR ${PROJECT_ROOT}/drivers)
 set(PLATFORM_DIR ${PROJECT_ROOT}/platform/stm32l476)
-set(EXTERNAL_DIR ${PROJECT_ROOT}/external)
 
 add_executable(bootloader.elf
     ${PLATFORM_DIR}/startup/bootloader_sttp.c
-    #${EXTERNAL_DIR}/cmsis-device-l4/Source/Templates/system_stm32l4xx.c
     src/main.c
     src/bootloader_validation.c
     src/bootloader_jump.c
-    src/test_flash.c
-    ${COMMON_DIR}/src/crc.c
-    ${COMMON_DIR}/src/ring_buffer.c
-    ${DRIVERS_DIR}/src/gpio.c
-    ${DRIVERS_DIR}/src/rcc_clock.c
-    ${DRIVERS_DIR}/src/rcc.c
-    ${DRIVERS_DIR}/src/systick.c
-    ${DRIVERS_DIR}/src/led.c
-    ${DRIVERS_DIR}/src/button.c
-    ${DRIVERS_DIR}/src/uart.c
 )
 
 # Include directories
 target_include_directories(bootloader.elf PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${COMMON_DIR}/include
-    ${DRIVERS_DIR}/include
 )
 
-# CMSIS
+
 target_link_libraries(bootloader.elf PRIVATE 
     cmsis
-    gcc
+    common
+    drivers
+    firmware_update
+    protocol
+    uart_transport
 )
 
 # Compiler options

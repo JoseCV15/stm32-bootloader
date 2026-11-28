@@ -11,13 +11,14 @@ static void systick_start(uint32_t reload)
     SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_TICKINT_Msk | SysTick_CTRL_ENABLE_Msk;
 }
 
+/*
 static void systick_stop(void)
 {
     SysTick->CTRL &= ~SysTick_CTRL_TICKINT_Msk;
     SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
     SysTick->LOAD = 0;
 }
-
+*/
 void SysTick_Handler(void)
 {
     s_tick_ms++;

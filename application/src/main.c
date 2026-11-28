@@ -15,16 +15,14 @@ int main()
 {
     status_t res;
     uint8_t recv_byte;
-    timer_t led_timer;
+    //timer_t led_timer;
 
-    systick_init(1000U);
-    led_init(&led_onboard);
-    led_off(&led_onboard);
-    res = uart_init();
-    if (res != STATUS_OK) {
-        led_on(&led_onboard);
-    }
-
+    //systick_init(1000U);
+   // led_init(&led_onboard);
+    //(&led_onboard);
+    uart_init();
+    
+/*
     res = timer_init(&led_timer, 500U, TIMER_PERIODIC_MODE);
     if (res != STATUS_OK) {
         led_on(&led_onboard);
@@ -35,12 +33,15 @@ int main()
         led_on(&led_onboard);
     }
     
-
-
+*/
     while (1) {
 
-        if (timer_is_expired(&led_timer)) {
-            res = uart_send_string(UART_ID_2, "Welcome to UART Echo example\r\n");
+        //if (timer_is_expired(&led_timer)) {
+         //   res = uart_send_string(UART_ID_2, "Welcome to UART Echo example\r\n");
+        //}
+
+        if(uart_receive_byte(UART_ID_2, &recv_byte) == STATUS_OK) {
+            uart_send_byte(UART_ID_2, recv_byte + 1);
         }
 
     }

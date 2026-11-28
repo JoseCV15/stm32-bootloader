@@ -55,6 +55,7 @@ static status_t gpio_enable_clock(gpio_port_t port)
 /**
  * Disable clock for a specific Gpio port
 */
+/*
 static status_t gpio_disable_clock(gpio_port_t port)
 {
     rcc_peripheral_t peripheral;
@@ -71,7 +72,7 @@ static status_t gpio_disable_clock(gpio_port_t port)
         default: return STATUS_INVALID_ARGUMENT;
     }
     return rcc_disable_clk_peripheral(peripheral);
-}
+}*/
 
 /**
  * Configure gpio for a specific mode

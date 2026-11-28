@@ -1,5 +1,4 @@
 #include "button.h"
-#include "systick.h"
 
 // Mechanical Bouncing 20 ticks 
 #define BUTTON_DEBOUNCE_MS   20U
@@ -17,8 +16,7 @@ static button_t button_table[BUTTON_MAX] = {
         .pull = GPIO_PULL_NONE,
         .active_low = true,
         .state = BUTTON_RELEASED,
-        .previous_state = BUTTON_RELEASED,
-        .last_change_tick = 0U
+        .previous_state = BUTTON_RELEASED
     },
     // Add other button configurations here
 };
@@ -27,7 +25,7 @@ static button_t button_table[BUTTON_MAX] = {
 * Helper to check if the requested button is valid
 */
 static bool button_is_valid(button_type_t type) {
-    return type < BUTTON_MAX;
+    return (type < BUTTON_MAX);
 }
 
 status_t button_init(button_type_t btn_type)
@@ -45,9 +43,13 @@ status_t button_init(button_type_t btn_type)
         return status;
     }
 
+    status = timer_init(&button_table[btn_type].debounce_timer, BUTTON_DEBOUNCE_MS, TIMER_ONE_SHOT_MODE);
+    if (status != STATUS_OK) {
+        return status;
+    }
+
     button_table[btn_type].state = BUTTON_RELEASED;
     button_table[btn_type].previous_state = BUTTON_RELEASED;
-    button_table[btn_type].last_change_tick = systick_get_tick();
 
     return STATUS_OK;
 }
@@ -85,33 +87,33 @@ uint8_t button_is_pressed(button_type_t btn_type)
     return (button_read(btn_type) == BUTTON_PRESSED) ? 1U : 0U ;
 }
 
+
 uint8_t button_was_pressed(button_type_t btn_type)
 {
-    uint32_t now;
+    button_t *button;
     button_state_t raw_state;
-    uint8_t pressed = 0U;
 
-    if (button_is_valid(btn_type)) {
-        now = systick_get_tick();
-        raw_state = button_read(btn_type);
-        if (raw_state != button_table[btn_type].state) {
-            button_table[btn_type].last_change_tick = now;
-            button_table[btn_type].state = raw_state;
-        }
-        else if ((now - button_table[btn_type].last_change_tick) >= BUTTON_DEBOUNCE_MS) {
-            if ((button_table[btn_type].previous_state == BUTTON_RELEASED) && 
-                (button_table[btn_type].state == BUTTON_PRESSED)) {
-                    pressed = 1U;
-            }
-            button_table[btn_type].previous_state =  button_table[btn_type].state;
-        }
-        else {
-            // Debounce period is still active
-        } 
-    }
-    else {
-        // Invalid button type
+    if (!button_is_valid(btn_type)){
+        return 0U;
     }
 
-    return pressed;
+    button = &button_table[btn_type];
+    raw_state = button_read(btn_type);
+
+    if (raw_state != button->state){
+        button->state = raw_state;
+        (void)timer_reset(&button->debounce_timer);
+        return 0U;
+    }
+
+    if (timer_is_expired(&button->debounce_timer)){
+        if ((button->previous_state == BUTTON_RELEASED) &&
+            (button->state == BUTTON_PRESSED)){
+            button->previous_state = button->state;
+            return 1U;
+        }
+        button->previous_state = button->state;
+    }
+
+    return 0U;
 }

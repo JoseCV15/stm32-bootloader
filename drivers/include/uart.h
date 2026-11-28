@@ -60,6 +60,7 @@ status_t uart_deinit(uart_id_t uart_id);
 
 status_t uart_send_byte(uart_id_t uart_id, uint8_t byte);
 status_t uart_send_string(uart_id_t uart_id, const char *str);
+status_t uart_send_buffer(uart_id_t uart_id, const uint8_t *buffer, uint32_t buffer_size);
 status_t uart_receive_byte(uart_id_t uart_id, uint8_t *byte);
 status_t uart_receive_string(uart_id_t uart_id, char *buffer_str, uint32_t buffer_size);
 

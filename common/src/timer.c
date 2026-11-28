@@ -3,8 +3,8 @@
 
 #define TIMER_MAX_TIMEOUT_MS    0x7FFFFFFFUL
 
-static uint64_t timer_calculate_elapsed(const timer_t *timer) {
-    return ((uint64_t)systick_get_tick() - timer->start_time);
+static uint32_t timer_calculate_elapsed(const timer_t *timer) {
+    return (systick_get_tick() - timer->start_time);
 }
 
 static bool timer_is_valid(const timer_t *timer)
@@ -19,7 +19,7 @@ static bool timer_is_valid(const timer_t *timer)
     return true;
 }
 
-status_t timer_init(timer_t *timer, uint64_t timeout_ms, timer_mode_t mode)
+status_t timer_init(timer_t *timer, uint32_t timeout_ms, timer_mode_t mode)
 {
     if (!timer) return STATUS_INVALID_ARGUMENT;
     if ((timeout_ms == 0U) || (timeout_ms > TIMER_MAX_TIMEOUT_MS)) {
@@ -66,7 +66,7 @@ status_t timer_reset(timer_t *timer)
     return timer_start(timer);
 }
 
-status_t timer_set_timeout(timer_t *timer, uint64_t new_timeout)
+status_t timer_set_timeout(timer_t *timer, uint32_t new_timeout)
 {
     if (!timer || (new_timeout == 0U) || (new_timeout > TIMER_MAX_TIMEOUT_MS)) {
         return STATUS_INVALID_ARGUMENT;
@@ -120,7 +120,7 @@ bool timer_is_running(const timer_t *timer)
     return (timer->state == TIMER_RUNNING);
 }
 
-uint64_t timer_get_elapsed(const timer_t *timer)
+uint32_t timer_get_elapsed(const timer_t *timer)
 {
     if (!timer) {
         return 0U;
@@ -133,9 +133,9 @@ uint64_t timer_get_elapsed(const timer_t *timer)
     return timer->elapsed_ms;
 }
 
-uint64_t timer_get_remaining(const timer_t *timer)
+uint32_t timer_get_remaining(const timer_t *timer)
 {
-    uint64_t elapsed;
+    uint32_t elapsed;
     if (!timer || (timer->state != TIMER_RUNNING)) {
         return 0U;
     }

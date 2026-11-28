@@ -14,7 +14,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # CMSIS dependencies
 add_library(cmsis INTERFACE)
 
-target_include_directories(cmsis INTERFACE
+target_include_directories(cmsis SYSTEM INTERFACE
     ${PROJECT_SOURCE_DIR}/external/cmsis-core/Include
     ${PROJECT_SOURCE_DIR}/external/cmsis-device-l4/Include
 )
@@ -23,7 +23,31 @@ target_compile_definitions(cmsis INTERFACE
     STM32L476xx
 )
 
-# Firmware targets
+
+# Architecture and ABI configuration for STM32L476RG
+add_library(mcu_options INTERFACE)
+
+target_compile_options(mcu_options INTERFACE
+    -mcpu=cortex-m4
+    -mthumb
+    -mfpu=fpv4-sp-d16
+    -mfloat-abi=hard
+)
+
+target_link_options(mcu_options INTERFACE
+    -mcpu=cortex-m4
+    -mthumb
+    -mfpu=fpv4-sp-d16
+    -mfloat-abi=hard
+)
+
+
+# Modules
+add_subdirectory(drivers)
+add_subdirectory(common)
+add_subdirectory(services/transport/uart)
+add_subdirectory(services/firmware_update)
+add_subdirectory(services/protocol)
 add_subdirectory(bootloader)
 add_subdirectory(application)
 
